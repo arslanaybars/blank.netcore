@@ -53,14 +53,6 @@ jobs:
       with:
         category: "/language:${{matrix.language}}"
         
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        # Path to SARIF file relative to the root of the repository
-        sarif_file: results.sarif
-        # Optional category for the results
-        # Used to differentiate multiple results for one commit
-        category: my-analysis-tool
- 
+    - name: Check for SARIF file
+      run: find . -name '*sarif' 
+
