@@ -92,3 +92,13 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+        output: codeql-results.sarif
+        
+    - name: Upload SARIF results
+      uses: actions/upload-artifact@v3
+      if: always() # 确保无论前一个步骤是否成功，都会执行此步骤
+      with:
+        name: SARIF-results-${{ matrix.language }}
+        # 使用步骤 ID 引用 SARIF 文件的路径
+        path: ${{ steps.codeql-analysis.outputs.sarif }}
+
