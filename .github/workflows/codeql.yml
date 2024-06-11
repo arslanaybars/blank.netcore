@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: CodeQL
 
 on:
   push:
@@ -41,18 +41,27 @@ jobs:
     - if: matrix.build-mode == 'manual'
       shell: bash
       run: |
-        echo 'If you are using a "manual" build mode for one or more of the' \
-          'languages you are analyzing, replace this with the commands to build' \
-          'your code, for example:'
+        echo 'Replace this with the commands to build your code.'
+        echo 'For example:'
         echo '  make bootstrap'
         echo '  make release'
         exit 1
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
-        
-    - name: Check for SARIF file
-      run: find . -name '*sarif' 
 
+    - name: Find SARIF files
+      id: find-sarif
+      shell: bash
+      run: |
+        sarif_files=$(find $(echo ${CODEQL_EXTRACTOR_CSHARP_SCRATCH_DIR}) -name '*.sarif')
+        echo "Found SARIF files:"
+        echo "${sarif_files}"
+        echo "::set-output name=sarif_files::${sarif_files}"
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      if: steps.find-sarif.outputs.sarif_files
+      with:
+        sarif_file: ${{ steps.find-sarif.outputs.sarif_files }}
+        category: my-analysis-tool
