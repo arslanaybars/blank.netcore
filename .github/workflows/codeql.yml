@@ -50,6 +50,15 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
 
+    - name: Output SARIF file
+      run: cat /home/runner/work/_temp/codeql_databases/csharp/*.sarif
+
+    - name: Upload CodeQL Database and SARIF files as artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: codeql-database-and-sarif
+        path: /home/runner/work/_temp/codeql_databases/csharp
+
     - name: Find SARIF files
       id: find-sarif
       shell: bash
