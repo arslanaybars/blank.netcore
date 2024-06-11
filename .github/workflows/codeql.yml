@@ -57,11 +57,12 @@ jobs:
         sarif_files=$(find $(echo ${CODEQL_EXTRACTOR_CSHARP_SCRATCH_DIR}) -name '*.sarif')
         echo "Found SARIF files:"
         echo "${sarif_files}"
-        echo "::set-output name=sarif_files::${sarif_files}"
+        # 使用环境变量替代 set-output
+        echo "SARIF_FILES=${sarif_files}" >> $GITHUB_ENV
 
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3
-      if: steps.find-sarif.outputs.sarif_files
+      if: ${{ env.SARIF_FILES }}
       with:
-        sarif_file: ${{ steps.find-sarif.outputs.sarif_files }}
+        sarif_file: ${{ env.SARIF_FILES }}
         category: my-analysis-tool
